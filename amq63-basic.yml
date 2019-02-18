@@ -148,6 +148,9 @@ objects:
           - containerPort: 8778
             name: jolokia
             protocol: TCP
+          - containerPort: 9779
+            name: prometheus
+            protocol: TCP
           - containerPort: 5672
             name: amqp
             protocol: TCP

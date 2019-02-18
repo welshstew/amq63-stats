@@ -4,4 +4,4 @@ rules:
     help: Queue Size
     type: GAUGE
     labels:
-destination: $4
+      destination: $4
