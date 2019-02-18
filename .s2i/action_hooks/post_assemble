@@ -1,0 +1,16 @@
+#!/bin/sh
+
+echo " -----> Post Assemble"
+
+PROMETHEUS_CONF=/tmp/src/prometheus/configuration
+PROMETHEUS_LIB=/tmp/src/prometheus/lib
+
+if [ -d ${PROMETHEUS_CONF} ]; then
+  echo "Copying config files from project..."
+  cp -v ${PROMETHEUS_CONF}/* $AMQ_HOME/conf/
+fi
+
+if [ -d ${PROMETHEUS_LIB} ]; then
+  echo "Copying jars from project..."
+  cp -v ${PROMETHEUS_LIB}/* $AMQ_HOME/lib/
+fi
