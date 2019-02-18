@@ -18,7 +18,6 @@ metadata:
     tags: messaging,amq,jboss
     version: 1.4.14
   name: amq63-basic
-  namespace: myproject
 objects:
 - apiVersion: v1
   kind: Service
