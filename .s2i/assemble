@@ -6,10 +6,16 @@ if [ "${SCRIPT_DEBUG}" = "true" ] ; then
 fi
 
 SRCCONF=/tmp/src/configuration
+SRCLIB=/tmp/src/lib
 
 if [ -d ${SRCCONF} ]; then
   echo "Copying config files from project..."
   cp -v ${SRCCONF}/* $AMQ_HOME/conf/
+fi
+
+if [ -d ${SRCLIB} ]; then
+  echo "Copying jars from project..."
+  cp -v ${SRCLIB}/* $AMQ_HOME/lib/
 fi
 
 # Remove java tmp perf data dir owned by 185
