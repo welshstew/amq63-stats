@@ -1,24 +1,34 @@
 #!/bin/sh
 
-if [ "${SCRIPT_DEBUG}" = "true" ] ; then
-    set -x
-    echo "Script debugging is enabled, allowing bash commands and their arguments to be printed as they are executed"
+# Global S2I variable setup
+source /tmp/src/.s2i/bin/s2i-setup
+
+if [ -f $S2I_SOURCE_DIR/.s2i/action_hooks/pre_assemble ]; then
+    if [ ! -x $S2I_SOURCE_DIR/.s2i/action_hooks/pre_assemble ]; then
+        echo "WARNING: Script $S2I_SOURCE_DIR/.s2i/action_hooks/pre_assemble not executable. Updating"
+        chmod +x $S2I_SOURCE_DIR/.s2i/action_hooks/pre_assemble
+    fi
 fi
 
-SRCCONF=/tmp/src/configuration
-SRCLIB=/tmp/src/lib
-
-if [ -d ${SRCCONF} ]; then
-  echo "Copying config files from project..."
-  cp -v ${SRCCONF}/* $AMQ_HOME/conf/
+if [ -f $S2I_SOURCE_DIR/.s2i/action_hooks/post_assemble ]; then
+    if [ ! -x $S2I_SOURCE_DIR/.s2i/action_hooks/post_assemble ]; then
+        echo "WARNING: Script $S2I_SOURCE_DIR/.s2i/action_hooks/post_assemble not executable. Updating"
+        chmod +x $S2I_SOURCE_DIR/.s2i/action_hooks/post_assemble
+    fi
 fi
 
-if [ -d ${SRCLIB} ]; then
-  echo "Copying jars from project..."
-  cp -v ${SRCLIB}/* $AMQ_HOME/lib/
+# 1. Run PrePhase
+if [ -x $S2I_SOURCE_DIR/.s2i/action_hooks/pre_assemble ]; then
+    echo " -----> Running $S2I_SOURCE_DIR/.s2i/action_hooks/pre_assemble"
+    $S2I_SOURCE_DIR/.s2i/action_hooks/pre_assemble
 fi
 
-# Remove java tmp perf data dir owned by 185
-rm -rf /tmp/hsperfdata_jboss
+# 2. Run MainPhase
+echo " -----> Running base Assemble $BASE_S2I_SCRIPTS_PATH/assemble"
+$BASE_S2I_SCRIPTS_PATH/assemble
 
-exit 0
+# 3. Run PostPhase
+if [ -x $S2I_SOURCE_DIR/.s2i/action_hooks/post_assemble ]; then
+    echo " -----> Running $S2I_SOURCE_DIR/.s2i/action_hooks/post_assemble"
+    $S2I_SOURCE_DIR/.s2i/action_hooks/post_assemble
+fi
